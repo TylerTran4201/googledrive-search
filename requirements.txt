@@ -1,0 +1,15 @@
+# Thư viện xử lý hình ảnh
+Pillow>=9.4.0          # Thư viện xử lý hình ảnh Python
+opencv-python>=4.7.0   # OpenCV cho Python
+numpy>=1.24.0          # Thư viện tính toán số học
+
+# Thư viện Google API
+google-api-python-client>=2.70.0    # Client API của Google
+google-auth>=2.16.0                # Xác thực Google
+google-auth-httplib2>=0.1.0        # HTTP lib cho Google Auth
+google-auth-oauthlib>=0.8.0        # OAuth cho Google Auth
+
+# Thư viện hỗ trợ
+six>=1.16.0             # Tương thích Python 2 và 3
+pywin32>=305.0; platform_system=="Windows"    # Hỗ trợ clipboard trên Windows
+xlib>=0.21; platform_system=="Linux"          # Hỗ trợ clipboard trên Linux

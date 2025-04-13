@@ -1,0 +1,62 @@
+# Bỏ qua tệp khóa tài khoản dịch vụ
+service-account-key.json
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Thư mục runtime
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Thư mục phụ thuộc
+node_modules/
+jspm_packages/
+bower_components/
+
+# Thư mục cache
+.npm
+.eslintcache
+.node_repl_history
+.yarn-integrity
+
+# Tệp môi trường và biến môi trường
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Thư mục build
+build/
+dist/
+out/
+
+# Thư mục và tệp hệ thống
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# IDE và trình soạn thảo
+.idea/
+.vscode/
+*.swp
+*.swo
+*.sublime-workspace
+*.sublime-project
+
+# Các tệp chứng chỉ và khóa
+*.pem
+*.key
+*credentials*
+*credential*
+
+# Các tệp tạm
+*.tmp
+*.temp
