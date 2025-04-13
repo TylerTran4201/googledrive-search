@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Module cung cấp frame nhập liệu và xử lý ảnh đầu vào với các thuật toán tách nền nâng cao
+Module cung cấp frame nhập liệu và xử lý ảnh đầu vào với phương pháp tách nền HSV
 """
 
 import tkinter as tk
@@ -38,7 +38,6 @@ class InputFrame:
         self.color_pick_mode = "one-click" # Chế độ chọn màu: "one-click" hoặc "picker"
         self.display_image = None          # Ảnh hiển thị trên canvas (để tính toán tọa độ)
         self.eyedropper_active = False     # Cờ đánh dấu công cụ eyedropper đang hoạt động
-        self.bg_removal_method = tk.StringVar(value="hsv_improved") # Phương pháp tách nền
         
         # Khởi tạo đối tượng tách nền
         self.bg_remover = BackgroundRemover()
@@ -104,29 +103,8 @@ class InputFrame:
         # Ẩn ColorPicker ban đầu
         self.color_picker_frame.pack_forget()
         
-        # Frame cho phương pháp tách nền
-        bg_method_frame = ttk.LabelFrame(self.frame, text="Phương pháp tách nền", padding="5")
-        bg_method_frame.pack(fill=tk.X, padx=5, pady=5)
-        
-        # Radio buttons cho các phương pháp tách nền
-        methods = [
-            ("HSV nâng cao (mặc định)", "hsv_improved"),
-            ("GrabCut (chất lượng cao, chậm)", "grabcut"),
-            ("Ngưỡng thích ứng", "adaptive_threshold"),
-            ("Khoảng cách màu đơn giản", "color")
-        ]
-        
-        # Tạo radio buttons
-        for text, value in methods:
-            ttk.Radiobutton(
-                bg_method_frame,
-                text=text,
-                value=value,
-                variable=self.bg_removal_method
-            ).pack(anchor=tk.W, padx=5, pady=2)
-        
         # Frame cho tham số tách nền
-        param_frame = ttk.Frame(bg_method_frame)
+        param_frame = ttk.LabelFrame(self.frame, text="Tham số tách nền HSV", padding="5")
         param_frame.pack(fill=tk.X, padx=5, pady=5)
         
         # Thanh trượt điều chỉnh dung sai màu nền
@@ -148,7 +126,7 @@ class InputFrame:
         # Nút tách nền
         self.remove_bg_button = ttk.Button(
             self.frame, 
-            text="Tách nền", 
+            text="Tách nền (HSV)", 
             command=self.remove_background,
             state=tk.DISABLED
         )
@@ -527,7 +505,7 @@ class InputFrame:
                 self.color_preview.config(bg=hex_color)
                 
                 # Thông báo
-                self.status_label.config(text=f"Trạng thái: Đã chọn màu nền RGB{color}. Nhấn 'Tách nền' để tiếp tục")
+                self.status_label.config(text=f"Trạng thái: Đã chọn màu nền RGB{color}. Nhấn 'Tách nền (HSV)' để tiếp tục")
                 
                 # Hủy kích hoạt eyedropper
                 self.deactivate_eyedropper()
@@ -540,7 +518,7 @@ class InputFrame:
                 print(f"Lỗi khi lấy màu: {e}")
     
     def remove_background(self):
-        """Xử lý sự kiện tách nền từ hình ảnh"""
+        """Xử lý sự kiện tách nền từ hình ảnh sử dụng phương pháp HSV"""
         if not self.clipboard_image:
             messagebox.showwarning("Cảnh báo", "Vui lòng dán hình ảnh trước khi tách nền")
             return
@@ -549,24 +527,14 @@ class InputFrame:
             # Lấy màu nền đã chọn
             bg_color = self.color_picker.get_selected_color()
             
-            # Lấy phương pháp tách nền
-            method = self.bg_removal_method.get()
-            
             # Cập nhật dung sai màu nền nếu người dùng đã điều chỉnh
             config.IMAGE_ANALYSIS['background_removal']['tolerance'] = self.tolerance_var.get()
             
             # Tách nền
-            self.status_label.config(text=f"Trạng thái: Đang tách nền bằng phương pháp {method}...")
+            self.status_label.config(text="Trạng thái: Đang tách nền bằng phương pháp HSV...")
             
-            # Hiển thị thanh tiến trình trong một cửa sổ riêng nếu sử dụng GrabCut
-            if method == "grabcut":
-                messagebox.showinfo(
-                    "Đang xử lý", 
-                    "Phương pháp GrabCut cần nhiều thời gian hơn, vui lòng chờ trong giây lát..."
-                )
-            
-            # Thực hiện tách nền trong một hàm riêng
-            result_image = self.bg_remover.remove_background_pil(self.clipboard_image, bg_color, method)
+            # Thực hiện tách nền với phương pháp HSV
+            result_image = self.bg_remover.remove_background_pil(self.clipboard_image, bg_color, method='hsv_improved')
             
             # Lưu kết quả
             self.processed_image = result_image
@@ -582,7 +550,7 @@ class InputFrame:
             self.search_original_button.config(state=tk.NORMAL)
             
             # Cập nhật trạng thái
-            self.status_label.config(text=f"Trạng thái: Đã tách nền thành công bằng phương pháp {method}")
+            self.status_label.config(text="Trạng thái: Đã tách nền thành công bằng phương pháp HSV")
             
         except Exception as e:
             messagebox.showerror("Lỗi", f"Lỗi khi tách nền: {str(e)}")
